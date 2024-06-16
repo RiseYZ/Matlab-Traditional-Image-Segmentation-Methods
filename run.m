@@ -20,8 +20,8 @@ num_files = length(test_files);
 
 
 % 该变量控制执行的算法名称
-% 如果要切换算法，请修改该变量的值，并在下方switch处添加对应语句
-method = 'threshold_seg';
+% 如果要增加算法，请修改该变量的值，并在下方switch处添加对应语句
+method = 'K_means';
 
 nums = num_files;
 
@@ -82,8 +82,19 @@ for i = 1:nums
             exit;
     end
     
-    % 以相同的文件名存储在pred_result目录下的对应目录（自己创建，请务必保持 算法函数名、该目录名 一致）中
-    imwrite(mask, sprintf('./pred_result/%s/%s', method,test_files(i).name));
+    % 检查 pred_result 目录是否存在，如果不存在，则创建
+    if ~exist('./pred_result', 'dir')
+       mkdir('./pred_result');
+    end
+
+    % 检查 method 对应的目录是否存在，如果不存在，则创建
+    method_dir = sprintf('./pred_result/%s', method);
+    if ~exist(method_dir, 'dir')
+       mkdir(method_dir);
+    end
+
+    % 现在可以安全地保存图像了
+    imwrite(mask, sprintf('%s/%s', method_dir, test_files(i).name));
     
 end
 
