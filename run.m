@@ -93,7 +93,6 @@ for i = 1:nums
        mkdir(method_dir);
     end
 
-    % 现在可以安全地保存图像了
     imwrite(mask, sprintf('%s/%s', method_dir, test_files(i).name));
     
 end
