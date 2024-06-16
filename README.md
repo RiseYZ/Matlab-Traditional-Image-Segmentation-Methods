@@ -53,6 +53,10 @@
 
 本实验所使用的数据集为 **ISIC 2016** ，该数据集是**皮肤病变图像**的分割数据集，其中训练集约有900张图像，测试集约有350张图像。因为传统图像分割算法大多是无监督模型，所以**我们仅选择了其中的900张训练集图像作为我们实验的数据集**（我们没有使用全部的图像，最开始仅仅只是为了简单起见就拿了其中的900张）。而U-Net模型是把这900张图像按照6:2:2划分成训练集，验证集和测试集
 
+#### 运行前说明
+你需要下载对应的数据集并且按照上述目录结构保存
+
+
 #### run.m 执行脚本
 
 开始运行前请把matlab的运行目录位于项目目录(7th-ImageSegment)下, 否则会出现路径的引用错误
@@ -84,8 +88,8 @@ num_files = length(test_files);
 
 
 % 该变量控制执行的算法名称
-% 如果要切换算法，请修改该变量的值，并在下方switch处添加对应语句
-method = 'threshold_seg';
+% 如果要增加算法，请修改该变量的值，并在下方switch处添加对应语句
+method = 'K_means';
 
 nums = num_files;
 
@@ -146,8 +150,19 @@ for i = 1:nums
             exit;
     end
     
-    % 以相同的文件名存储在pred_result目录下的对应目录（自己创建，请务必保持 算法函数名、该目录名 一致）中
-    imwrite(mask, sprintf('./pred_result/%s/%s', method,test_files(i).name));
+    % 检查 pred_result 目录是否存在，如果不存在，则创建
+    if ~exist('./pred_result', 'dir')
+       mkdir('./pred_result');
+    end
+
+    % 检查 method 对应的目录是否存在，如果不存在，则创建
+    method_dir = sprintf('./pred_result/%s', method);
+    if ~exist(method_dir, 'dir')
+       mkdir(method_dir);
+    end
+
+    % 现在可以安全地保存图像了
+    imwrite(mask, sprintf('%s/%s', method_dir, test_files(i).name));
     
 end
 
@@ -160,6 +175,7 @@ fprintf('The evaluation of %s:\n', method);
 fprintf('Elapsed time: %.4f seconds\n', run_time);
 fprintf('Dice: %.4f\n', dice);
 fprintf('IOU: %.4f\n', iou);
+
 
 
 ```
